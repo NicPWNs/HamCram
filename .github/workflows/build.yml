@@ -1,0 +1,91 @@
+name: Build and test
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+  schedule:
+    # Every Monday: catch firmware SDK changes and new NCVEC pools or errata
+    - cron: "17 6 * * 1"
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    name: "uFBT build (${{ matrix.channel }})"
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        channel: [release, rc, dev]
+    steps:
+      - uses: actions/checkout@v4
+      - name: Build with uFBT
+        uses: flipperdevices/flipperzero-ufbt-action@v0.1
+        id: build
+        with:
+          sdk-channel: ${{ matrix.channel }}
+      - name: Upload .fap
+        uses: actions/upload-artifact@v4
+        with:
+          name: hamcram-${{ steps.build.outputs.suffix }}
+          path: ${{ steps.build.outputs.fap-artifacts }}
+
+  lint:
+    name: uFBT lint
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Check formatting with uFBT
+        uses: flipperdevices/flipperzero-ufbt-action@v0.1
+        with:
+          task: lint
+          sdk-channel: release
+
+  tools:
+    name: Pools, tools and host tests
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Lint Python
+        run: |
+          python -m pip install --quiet ruff
+          ruff check tools tests
+          ruff format --check tools tests
+      - name: Pool files match their JSON sources
+        run: python tools/hampool.py verify
+      - name: Icon is 10x10 and 1-bit
+        run: |
+          python - <<'EOF'
+          import struct
+          data = open("hamcram.png", "rb").read()
+          width, height, depth, color = struct.unpack(">IIBB", data[16:26])
+          assert (width, height, depth, color) == (10, 10, 1, 0), (width, height, depth, color)
+          EOF
+      - name: Host tests (ASan + UBSan)
+        env:
+          CC: gcc
+          HAMCRAM_SANITIZE: "1"
+        run: python tests/run_host_tests.py
+
+  upstream:
+    name: NCVEC pools are current
+    # Needs ncvec.org, so keep it off pushes and pull requests
+    if: github.event_name == 'schedule' || github.event_name == 'workflow_dispatch'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: No newer pool or errata published
+        run: python tools/hampool.py upstream
+      - name: Pools rebuild identically from the NCVEC documents
+        run: |
+          python tools/hampool.py all
+          git diff --exit-code -- pools files

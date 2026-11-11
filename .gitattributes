@@ -1,0 +1,4 @@
+* text=auto eol=lf
+*.hcp binary
+*.png binary
+*.docx binary

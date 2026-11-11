@@ -1,0 +1,23 @@
+## Draft manifest for the Flipper Apps Catalog.
+## Goes to applications/Tools/hamcram/manifest.yml in a fork of
+## https://github.com/flipperdevices/flipper-application-catalog
+## See catalog/README.md in this repo for the steps.
+##
+## name, id, category, version, author and icon are taken from application.fam.
+
+sourcecode:
+  type: git
+  location:
+    origin: https://github.com/NicPWNs/HamCram.git
+    ## TODO: full SHA of the commit being submitted (it must contain the screenshots)
+    commit_sha: 0000000000000000000000000000000000000000
+short_description: Offline study for the US ham radio license exams
+description: "@README.md"
+changelog: "@./docs/changelog.md"
+## Unmodified qFlipper screenshots; the first one is the catalog preview
+screenshots:
+  - screenshots/ss0.png
+  - screenshots/ss1.png
+  - screenshots/ss2.png
+  - screenshots/ss3.png
+  - screenshots/ss4.png

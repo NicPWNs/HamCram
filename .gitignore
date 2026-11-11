@@ -1,0 +1,14 @@
+# uFBT build output and editor integration
+dist/
+.vscode/
+.ufbt/
+*.fap
+
+# Downloaded NCVEC documents (re-fetch with tools/hampool.py fetch)
+pools/.cache/
+
+# Python
+__pycache__/
+*.pyc
+.ruff_cache/
+venv/
