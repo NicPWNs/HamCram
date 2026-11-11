@@ -2,6 +2,7 @@
 
 #include <furi.h>
 #include <gui/gui.h>
+#include <notification/notification.h>
 #include <gui/modules/dialog_ex.h>
 #include <gui/modules/submenu.h>
 #include <gui/modules/variable_item_list.h>
@@ -61,6 +62,7 @@ typedef struct {
 typedef struct {
     bool skip_figures;
     bool shuffle;
+    bool feedback; /* LED and vibration when an answer is revealed */
 } HamCramSettings;
 
 typedef struct {
@@ -74,6 +76,7 @@ typedef struct {
 typedef struct {
     Gui* gui;
     Storage* storage;
+    NotificationApp* notifications;
     ViewDispatcher* view_dispatcher;
     SceneManager* scene_manager;
 
@@ -113,6 +116,9 @@ bool hamcram_open_pool(HamCram* app, uint8_t index);
 void hamcram_close_pool(HamCram* app);
 void hamcram_save_progress(HamCram* app);
 void hamcram_save_settings(HamCram* app);
+
+/** Blink green for a right answer; blink red and buzz for a wrong one */
+void hamcram_feedback(HamCram* app, bool correct);
 
 /** Shared submenu callback: sends the item index as a custom event */
 void hamcram_submenu_callback(void* context, uint32_t index);

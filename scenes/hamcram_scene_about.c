@@ -4,7 +4,7 @@ void hamcram_scene_about_on_enter(void* context) {
     HamCram* app = context;
     FuriString* text = app->text;
 
-    furi_string_printf(text, "\e#Ham Cram v%s\nby @NicPWNs\n\n", HAMCRAM_VERSION);
+    furi_string_printf(text, "\e#Ham Cram v%s\nby @NicPWNs (N1CPJ)\n\n", HAMCRAM_VERSION);
     hamcram_cat_wrapped(
         text,
         "Offline study for the US amateur radio license exams.\n\n"

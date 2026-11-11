@@ -1,16 +1,18 @@
 #include "hamcram.h"
 
 #include <furi_hal_rtc.h>
+#include <notification/notification_messages.h>
 #include <stdio.h>
 #include <string.h>
 
 #define HAMCRAM_SETTINGS_PATH  APP_DATA_PATH("settings.bin")
-#define HAMCRAM_SETTINGS_MAGIC 0x31434843 /* "CHC1" */
+#define HAMCRAM_SETTINGS_MAGIC 0x32434843 /* "CHC2" */
 
 typedef struct __attribute__((packed)) {
     uint32_t magic;
     uint8_t skip_figures;
     uint8_t shuffle;
+    uint8_t feedback;
 } HamCramSettingsFile;
 
 /* ------------------------------------------------------------- settings */
@@ -18,6 +20,7 @@ typedef struct __attribute__((packed)) {
 static void hamcram_load_settings(HamCram* app) {
     app->settings.skip_figures = true;
     app->settings.shuffle = true;
+    app->settings.feedback = true;
 
     HamCramSettingsFile data;
     File* file = storage_file_alloc(app->storage);
@@ -26,6 +29,7 @@ static void hamcram_load_settings(HamCram* app) {
        data.magic == HAMCRAM_SETTINGS_MAGIC) {
         app->settings.skip_figures = data.skip_figures != 0;
         app->settings.shuffle = data.shuffle != 0;
+        app->settings.feedback = data.feedback != 0;
     }
     storage_file_close(file);
     storage_file_free(file);
@@ -36,6 +40,7 @@ void hamcram_save_settings(HamCram* app) {
         .magic = HAMCRAM_SETTINGS_MAGIC,
         .skip_figures = app->settings.skip_figures,
         .shuffle = app->settings.shuffle,
+        .feedback = app->settings.feedback,
     };
     File* file = storage_file_alloc(app->storage);
     if(storage_file_open(file, HAMCRAM_SETTINGS_PATH, FSAM_WRITE, FSOM_CREATE_ALWAYS)) {
@@ -166,6 +171,24 @@ void hamcram_cat_wrapped(FuriString* out, const char* text) {
     }
 }
 
+/* Silent on purpose: people study in quiet places. The vibration still
+ * follows the Flipper's own vibro setting. */
+static const NotificationSequence hamcram_sequence_wrong = {
+    &message_vibro_on,
+    &message_red_255,
+    &message_delay_100,
+    &message_vibro_off,
+    &message_delay_100,
+    &message_red_0,
+    NULL,
+};
+
+void hamcram_feedback(HamCram* app, bool correct) {
+    if(!app->settings.feedback) return;
+    notification_message(
+        app->notifications, correct ? &sequence_blink_green_100 : &hamcram_sequence_wrong);
+}
+
 void hamcram_submenu_callback(void* context, uint32_t index) {
     HamCram* app = context;
     view_dispatcher_send_custom_event(app->view_dispatcher, index);
@@ -204,6 +227,7 @@ static HamCram* hamcram_alloc(void) {
     memset(app, 0, sizeof(HamCram));
 
     app->gui = furi_record_open(RECORD_GUI);
+    app->notifications = furi_record_open(RECORD_NOTIFICATION);
     app->storage = furi_record_open(RECORD_STORAGE);
     app->text = furi_string_alloc();
 
@@ -259,6 +283,7 @@ static void hamcram_free(HamCram* app) {
     view_dispatcher_free(app->view_dispatcher);
     furi_string_free(app->text);
     furi_record_close(RECORD_STORAGE);
+    furi_record_close(RECORD_NOTIFICATION);
     furi_record_close(RECORD_GUI);
     free(app);
 }

@@ -15,6 +15,7 @@ Ham Cram carries the complete official question pools for all three license clas
 - **Review missed**. Every question you get wrong, in study or in an exam, goes on a review list. The ones you miss most often come first, and a question leaves the list once you have answered it correctly enough times to make up for the misses.
 - **Progress that sticks**. Mastered questions, the review list and your exam history are saved to the SD card, per pool.
 - **Shuffled answers**, so you learn the content and not the letter. "All these choices are correct" stays in last place where it makes sense. Shuffling can be turned off under **Settings**.
+- **Instant feedback**. In study and review the LED blinks green for a right answer and red, with a short buzz, for a wrong one. It makes no sound, and can be turned off under **Settings**.
 
 ## Controls
 

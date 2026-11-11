@@ -140,6 +140,7 @@ static void quiz_answer(HamCram* app, uint8_t slot) {
             slot,
             quiz_slot_of(item->perm, app->quiz_correct),
             correct ? "Correct" : "Wrong");
+        hamcram_feedback(app, correct);
     }
 }
 
