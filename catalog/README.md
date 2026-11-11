@@ -6,9 +6,9 @@ Requirements were checked against the catalog's `Contributing.md` and
 
 ## Before submitting
 
-1. Take screenshots with qFlipper (leave them exactly as qFlipper saves them) and save
-   them as `screenshots/ss0.png`, `ss1.png`, `ss2.png`. See
-   [screenshots/README.md](../screenshots/README.md) for suggestions.
+1. Screenshots live in `screenshots/` as `ss0.png`, `ss1.png`, ... and are
+   listed in `manifest.yml`; the first is the catalog preview. Take new ones
+   with qFlipper and leave them exactly as it saves them (512x256).
 2. Commit everything and push to `main`. Wait for CI to pass.
 3. Put that commit's full SHA into `commit_sha` in `manifest.yml`. If you
    use fewer or more screenshots, edit the list to match.

@@ -14,8 +14,9 @@ sourcecode:
 short_description: Offline study for the US ham radio license exams
 description: "@README.md"
 changelog: "@./docs/changelog.md"
-## TODO: unmodified qFlipper screenshots; the first one is the catalog preview
+## Unmodified qFlipper screenshots; the first one is the catalog preview
 screenshots:
   - screenshots/ss0.png
   - screenshots/ss1.png
   - screenshots/ss2.png
+  - screenshots/ss3.png
