@@ -183,10 +183,33 @@ static const NotificationSequence hamcram_sequence_wrong = {
     NULL,
 };
 
+/* Passing an exam earns two green blinks and a buzz */
+static const NotificationSequence hamcram_sequence_passed = {
+    &message_vibro_on,
+    &message_green_255,
+    &message_delay_100,
+    &message_vibro_off,
+    &message_green_0,
+    &message_delay_100,
+    &message_green_255,
+    &message_delay_250,
+    &message_green_0,
+    NULL,
+};
+
 void hamcram_feedback(HamCram* app, bool correct) {
     if(!app->settings.feedback) return;
     notification_message(
         app->notifications, correct ? &sequence_blink_green_100 : &hamcram_sequence_wrong);
+}
+
+void hamcram_feedback_exam(HamCram* app, bool passed) {
+    if(!app->settings.feedback) return;
+    if(passed) {
+        notification_message(app->notifications, &hamcram_sequence_passed);
+    } else {
+        notification_message(app->notifications, &hamcram_sequence_wrong);
+    }
 }
 
 void hamcram_submenu_callback(void* context, uint32_t index) {

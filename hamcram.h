@@ -120,6 +120,9 @@ void hamcram_save_settings(HamCram* app);
 /** Blink green for a right answer; blink red and buzz for a wrong one */
 void hamcram_feedback(HamCram* app, bool correct);
 
+/** The same for a graded exam: two green blinks for a pass */
+void hamcram_feedback_exam(HamCram* app, bool passed);
+
 /** Shared submenu callback: sends the item index as a custom event */
 void hamcram_submenu_callback(void* context, uint32_t index);
 

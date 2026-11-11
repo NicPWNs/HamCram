@@ -484,7 +484,7 @@ static void quiz_check_frame(QuizView* view, Canvas* canvas, uint8_t* line_seen)
     CHECK(model->laid_out);
     CHECK(model->line_count > 0 && model->line_count <= QUIZ_MAX_LINES);
     CHECK(model->scroll <= quiz_view_max_scroll(model));
-    CHECK(canvas->scrollbar == (model->line_count > QUIZ_VISIBLE));
+    CHECK(canvas->scrollbar == (quiz_view_shown_lines(model) > QUIZ_VISIBLE));
 
     for(size_t i = 0; i < canvas->string_count; i++) {
         const ShimString* string = &canvas->strings[i];
@@ -495,7 +495,8 @@ static void quiz_check_frame(QuizView* view, Canvas* canvas, uint8_t* line_seen)
             CHECK(string->y <= QUIZ_SCREEN_H);
         }
     }
-    for(uint8_t row = 0; row < QUIZ_VISIBLE && model->scroll + row < model->line_count; row++) {
+    for(uint8_t row = 0; row < QUIZ_VISIBLE && model->scroll + row < quiz_view_shown_lines(model);
+        row++) {
         line_seen[model->scroll + row] = 1;
     }
 
@@ -553,7 +554,10 @@ static void test_quiz_view_pool(Pool* pool, QuizView* view) {
     for(uint16_t q = 0; q < pool->header.num_questions; q++) {
         PoolQuestion question;
         CHECK(pool_read_question(pool, q, &question));
+        char footer[80] = "";
+        if(question.ref[0]) snprintf(footer, sizeof(footer), "FCC rule: %.48s", question.ref);
         QuizViewData data = {
+            .footer = footer[0] ? footer : NULL,
             .left = "599/599",
             .right = question.id,
             .note = (question.flags & POOL_FLAG_FIGURE) ? "[Figure not shown: see ncvec.org]" :
@@ -593,7 +597,7 @@ static void test_quiz_view_pool(Pool* pool, QuizView* view) {
         CHECK(presses < 400);
         CHECK(model->selected == 3);
         CHECK(model->scroll == quiz_view_max_scroll(model));
-        for(uint8_t i = 0; i < model->line_count; i++)
+        for(uint8_t i = 0; i < quiz_view_shown_lines(model); i++)
             CHECK(line_seen[i]);
 
         /* And back up to the top of the question */
@@ -608,7 +612,7 @@ static void test_quiz_view_pool(Pool* pool, QuizView* view) {
             last_scroll = model->scroll;
         }
         CHECK(model->selected == -1 && model->scroll == 0);
-        for(uint8_t i = 0; i < model->line_count; i++)
+        for(uint8_t i = 0; i < quiz_view_shown_lines(model); i++)
             CHECK(line_seen[i]);
 
         /* Answer with each slot in turn across the pool, then reveal */
@@ -646,8 +650,15 @@ static void test_quiz_view_pool(Pool* pool, QuizView* view) {
             quiz_check_frame(view, &canvas, line_seen);
         }
         CHECK(model->scroll == quiz_view_max_scroll(model));
-        for(uint8_t i = 0; i < model->line_count; i++)
+        for(uint8_t i = 0; i < quiz_view_shown_lines(model); i++)
             CHECK(line_seen[i]);
+        /* The rule citation is the last thing on screen, and only now */
+        CHECK(quiz_view_shown_lines(model) == model->line_count);
+        CHECK((model->block_lines[QUIZ_FOOTER] > 0) == (footer[0] != '\0'));
+        if(footer[0] && canvas.string_count > 0) {
+            const ShimString* last = &canvas.strings[canvas.string_count - 1];
+            CHECK(strstr(footer, last->text) != NULL && last->x == 1);
+        }
         shim_view_input(view->view, InputKeyOk, InputTypeShort);
         CHECK(quiz_events.count == 2 && quiz_events.event == QuizViewEventNext);
         shim_view_input(view->view, InputKeyLeft, InputTypeShort);

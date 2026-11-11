@@ -6,6 +6,7 @@
 #include <string.h>
 
 #define QUIZ_BLOCKS     5 /* question + 4 answers */
+#define QUIZ_FOOTER     QUIZ_BLOCKS /* extra block shown once the answer is revealed */
 #define QUIZ_TEXT_SIZE  1700
 #define QUIZ_MAX_LINES  160
 #define QUIZ_LINE_CHARS 63
@@ -30,7 +31,7 @@ typedef struct {
     char center[12];
     char right[8];
     char text[QUIZ_TEXT_SIZE];
-    uint16_t block_text[QUIZ_BLOCKS];
+    uint16_t block_text[QUIZ_BLOCKS + 1];
     int8_t selected; /* -1 = reading the question, 0-3 = answer slot */
     int8_t chosen;
     int8_t correct;
@@ -38,8 +39,8 @@ typedef struct {
     bool laid_out;
     uint8_t scroll;
     uint8_t line_count;
-    uint8_t block_first[QUIZ_BLOCKS];
-    uint8_t block_lines[QUIZ_BLOCKS];
+    uint8_t block_first[QUIZ_BLOCKS + 1];
+    uint8_t block_lines[QUIZ_BLOCKS + 1];
     QuizLine lines[QUIZ_MAX_LINES];
 } QuizViewModel;
 
@@ -53,7 +54,8 @@ struct QuizView {
 
 static void quiz_view_wrap_block(Canvas* canvas, QuizViewModel* model, uint8_t block) {
     const char* text = model->text + model->block_text[block];
-    const size_t max_width = (block == 0) ? QUIZ_TEXT_W - 2 : QUIZ_TEXT_W - QUIZ_ANSWER_X - 1;
+    const bool full_width = block == 0 || block == QUIZ_FOOTER;
+    const size_t max_width = full_width ? QUIZ_TEXT_W - 2 : QUIZ_TEXT_W - QUIZ_ANSWER_X - 1;
     size_t i = 0;
 
     model->block_first[block] = model->line_count;
@@ -110,14 +112,20 @@ static void quiz_view_wrap_block(Canvas* canvas, QuizViewModel* model, uint8_t b
 
 static void quiz_view_layout(Canvas* canvas, QuizViewModel* model) {
     model->line_count = 0;
-    for(uint8_t block = 0; block < QUIZ_BLOCKS; block++) {
+    for(uint8_t block = 0; block <= QUIZ_FOOTER; block++) {
         quiz_view_wrap_block(canvas, model, block);
     }
     model->laid_out = true;
 }
 
+/* Lines the user can scroll through: the footer only exists after the reveal */
+static uint8_t quiz_view_shown_lines(const QuizViewModel* model) {
+    return model->reveal ? model->line_count : model->block_first[QUIZ_FOOTER];
+}
+
 static uint8_t quiz_view_max_scroll(const QuizViewModel* model) {
-    return model->line_count > QUIZ_VISIBLE ? model->line_count - QUIZ_VISIBLE : 0;
+    uint8_t lines = quiz_view_shown_lines(model);
+    return lines > QUIZ_VISIBLE ? lines - QUIZ_VISIBLE : 0;
 }
 
 /* Scroll as little as possible so that `block` is on screen. A block taller
@@ -179,11 +187,11 @@ static void quiz_view_draw_callback(Canvas* canvas, void* context) {
 
     for(uint8_t row = 0; row < QUIZ_VISIBLE; row++) {
         uint16_t index = model->scroll + row;
-        if(index >= model->line_count) break;
+        if(index >= quiz_view_shown_lines(model)) break;
         const QuizLine* line = &model->lines[index];
         int32_t y = QUIZ_CONTENT_Y + row * QUIZ_LINE_H;
         int8_t slot = (int8_t)line->block - 1;
-        bool is_answer = slot >= 0;
+        bool is_answer = slot >= 0 && slot < QUIZ_BLOCKS - 1;
         bool highlight = is_answer &&
                          (model->reveal ? slot == model->correct : slot == model->selected);
 
@@ -220,7 +228,7 @@ static void quiz_view_draw_callback(Canvas* canvas, void* context) {
         canvas_set_color(canvas, ColorBlack);
     }
 
-    if(model->line_count > QUIZ_VISIBLE) {
+    if(quiz_view_shown_lines(model) > QUIZ_VISIBLE) {
         elements_scrollbar_pos(
             canvas,
             QUIZ_SCREEN_W - 1,
@@ -389,6 +397,10 @@ void quiz_view_set_question(QuizView* quiz_view, const QuizViewData* data) {
                 model->text[used] = '\0';
                 quiz_view_append(model, &used, data->answers[i]);
             }
+            if(used < QUIZ_TEXT_SIZE - 1) used++;
+            model->block_text[QUIZ_FOOTER] = used;
+            model->text[used] = '\0';
+            quiz_view_append(model, &used, data->footer);
 
             model->selected = -1;
             model->chosen = data->chosen;

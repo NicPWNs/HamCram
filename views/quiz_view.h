@@ -27,6 +27,7 @@ typedef struct {
     const char* note; /**< Optional line shown before the question */
     const char* question;
     const char* answers[4]; /**< In display order */
+    const char* footer; /**< Optional line after the answers, shown once revealed */
     int8_t chosen; /**< Displayed slot the user picked, or -1 */
     int8_t correct; /**< Displayed slot of the right answer, or -1 */
     bool reveal; /**< Show which answer is right; answering is disabled */

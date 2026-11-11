@@ -79,6 +79,7 @@ bool hamcram_scene_confirm_on_event(void* context, SceneManagerEvent event) {
         } else if(event.event == HamCramEventCenter) {
             confirm_grade_exam(app);
             scene_manager_next_scene(app->scene_manager, HamCramSceneResult);
+            hamcram_feedback_exam(app, app->result.passed);
         } else {
             scene_manager_previous_scene(app->scene_manager);
         }

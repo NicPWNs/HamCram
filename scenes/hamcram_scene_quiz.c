@@ -50,6 +50,11 @@ static void quiz_show(HamCram* app) {
     data.right = question.id;
     data.question = question.question;
     if(question.flags & POOL_FLAG_FIGURE) data.note = QUIZ_FIGURE_NOTE;
+    if(question.ref[0] != '\0') {
+        /* Part 97 citation from the pool, for looking the rule up afterwards */
+        snprintf(app->line[1], sizeof(app->line[1]), "FCC rule: %.48s", question.ref);
+        data.footer = app->line[1];
+    }
     for(uint8_t slot = 0; slot < POOL_ANSWERS; slot++) {
         data.answers[slot] = question.answers[session_perm_get(item->perm, slot)];
     }
