@@ -4,7 +4,7 @@ void hamcram_scene_about_on_enter(void* context) {
     HamCram* app = context;
     FuriString* text = app->text;
 
-    furi_string_printf(text, "\e#Ham Cram v%s\n", HAMCRAM_VERSION);
+    furi_string_printf(text, "\e#Ham Cram v%s\nby @NicPWNs\n\n", HAMCRAM_VERSION);
     hamcram_cat_wrapped(
         text,
         "Offline study for the US amateur radio license exams.\n\n"
@@ -23,6 +23,7 @@ void hamcram_scene_about_on_enter(void* context) {
         "NCVEC Question Pool Committee.\n\n"
         "Ham Cram is an independent project. It is not affiliated with or "
         "endorsed by the ARRL, NCVEC or the FCC.\n\n"
+        "Open source, MIT license:\n"
         "github.com/NicPWNs/HamCram\n");
 
     widget_add_text_scroll_element(app->widget, 0, 0, 128, 64, furi_string_get_cstr(text));

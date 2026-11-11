@@ -10,11 +10,11 @@ Ham Cram carries the complete official question pools for all three license clas
 
 ## What it does
 
-- **Practice exams** built like the real thing: one question drawn at random from every question group (35 questions for Technician and General, 50 for Extra), graded against the real 74% pass mark (26 of 35, or 37 of 50). Nothing is revealed until you grade the exam, and you can step back to change an answer first.
+- **Practice exams** built like the real thing: one question drawn at random from every question group (35 questions for Technician and General, 50 for Extra), graded against the real 74% pass mark (26 of 35, or 37 of 50). Nothing is revealed until you grade the exam, and you can step back to change an answer first. Afterwards, **Missed** walks you through the questions you got wrong with the right answers marked.
 - **Study by topic**. Work through a whole pool, one subelement (for example _T5 Electrical Principles_) or a single question group. You see the right answer immediately after each question. Questions you already know drop out, so each session picks up where you left off.
 - **Review missed**. Every question you get wrong, in study or in an exam, goes on a review list. The ones you miss most often come first, and a question leaves the list once you have answered it correctly enough times to make up for the misses.
 - **Progress that sticks**. Mastered questions, the review list and your exam history are saved to the SD card, per pool.
-- **Shuffled answers**, so you learn the content and not the letter. "All these choices are correct" stays in last place where it makes sense.
+- **Shuffled answers**, so you learn the content and not the letter. "All these choices are correct" stays in last place where it makes sense. Shuffling can be turned off under **Settings**.
 
 ## Controls
 
@@ -52,6 +52,6 @@ Ham Cram is an independent, open source project. It is **not affiliated with, sp
 
 ## Source, issues and license
 
-Source code, build instructions and the pool conversion tools are at [github.com/NicPWNs/HamCram](https://github.com/NicPWNs/HamCram). Bug reports are welcome there. For developers: see [docs/development.md](https://github.com/NicPWNs/HamCram/blob/main/docs/development.md) and [docs/updating-pools.md](https://github.com/NicPWNs/HamCram/blob/main/docs/updating-pools.md).
+Ham Cram is made by NicPWNs. Source code, build instructions and the pool conversion tools are at [github.com/NicPWNs/HamCram](https://github.com/NicPWNs/HamCram). Bug reports are welcome there. For developers: see [docs/development.md](https://github.com/NicPWNs/HamCram/blob/main/docs/development.md) and [docs/updating-pools.md](https://github.com/NicPWNs/HamCram/blob/main/docs/updating-pools.md).
 
 The app is released under the MIT license. The question pools are in the public domain.
