@@ -524,7 +524,12 @@ static void quiz_check_wrap(QuizView* view, const QuizViewData* data) {
             const QuizLine* line = &model->lines[model->block_first[block] + i];
             CHECK(line->block == block);
             CHECK(line->length > 0 && line->length <= QUIZ_LINE_CHARS);
-            if(i > 0) rebuilt[used++] = ' ';
+            /* A break at a space drops the space; one after a hyphen drops nothing */
+            if(i > 0 && model->text[line->start - 1] == ' ') {
+                rebuilt[used++] = ' ';
+            } else if(i > 0) {
+                CHECK(model->text[line->start - 1] == '-');
+            }
             memcpy(rebuilt + used, model->text + line->start, line->length);
             used += line->length;
         }

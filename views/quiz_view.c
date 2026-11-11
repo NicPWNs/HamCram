@@ -1,6 +1,7 @@
 #include "quiz_view.h"
 
 #include <furi.h>
+#include <ctype.h>
 #include <gui/elements.h>
 #include <string.h>
 
@@ -12,11 +13,11 @@
 #define QUIZ_SCREEN_W  128
 #define QUIZ_SCREEN_H  64
 #define QUIZ_HEADER_H  9
-#define QUIZ_CONTENT_Y 10
-#define QUIZ_LINE_H    9
-#define QUIZ_VISIBLE   6
+#define QUIZ_CONTENT_Y 11
+#define QUIZ_LINE_H    10 /* 7 px glyph + 2 px descender + 1 px gap */
+#define QUIZ_VISIBLE   5
 #define QUIZ_TEXT_W    124 /* leaves room for the scrollbar */
-#define QUIZ_ANSWER_X  11
+#define QUIZ_ANSWER_X  14 /* after the "A." label */
 
 typedef struct {
     uint16_t start;
@@ -59,14 +60,25 @@ static void quiz_view_wrap_block(Canvas* canvas, QuizViewModel* model, uint8_t b
     while(text[i] != '\0' && model->line_count < QUIZ_MAX_LINES) {
         size_t width = 0;
         size_t j = i;
-        size_t last_space = 0;
-        bool has_space = false;
+        size_t break_end = 0;
+        size_t break_next = 0;
+        bool has_break = false;
         while(text[j] != '\0' && j - i < QUIZ_LINE_CHARS) {
             size_t glyph = canvas_glyph_width(canvas, (uint8_t)text[j]);
             if(width + glyph > max_width) break;
             if(text[j] == ' ') {
-                last_space = j;
-                has_space = true;
+                /* Break at a space, dropping it */
+                break_end = j;
+                break_next = j + 1;
+                has_break = true;
+            } else if(
+                text[j] == '-' && j > i && isalpha((uint8_t)text[j - 1]) &&
+                isalpha((uint8_t)text[j + 1])) {
+                /* Break after the hyphen of a compound word such as
+                 * "temperature-controlled", but not inside "-6 dB" or "RG-58" */
+                break_end = j + 1;
+                break_next = j + 1;
+                has_break = true;
             }
             width += glyph;
             j++;
@@ -79,9 +91,9 @@ static void quiz_view_wrap_block(Canvas* canvas, QuizViewModel* model, uint8_t b
         } else if(text[j] == ' ') {
             end = j;
             next = j + 1;
-        } else if(has_space) {
-            end = last_space;
-            next = last_space + 1;
+        } else if(has_break) {
+            end = break_end;
+            next = break_next;
         } else {
             /* One word wider than the screen: break it, always advancing */
             end = next = (j > i) ? j : i + 1;
@@ -192,15 +204,16 @@ static void quiz_view_draw_callback(Canvas* canvas, void* context) {
             } else if(model->reveal && slot == model->chosen) {
                 quiz_view_draw_mark(canvas, y, false);
             } else {
-                char label[2] = {(char)('A' + slot), '\0'};
+                /* The dot keeps "A." apart from an answer that starts with "A" */
+                char label[3] = {(char)('A' + slot), '.', '\0'};
                 if(!model->reveal && slot == model->chosen) {
                     /* Already answered (exam): letter in a contrasting box */
-                    canvas_draw_box(canvas, 1, y, 9, QUIZ_LINE_H);
+                    canvas_draw_box(canvas, 1, y, 12, QUIZ_LINE_H);
                     canvas_invert_color(canvas);
-                    canvas_draw_str(canvas, 3, y + 8, label);
+                    canvas_draw_str(canvas, 2, y + 8, label);
                     canvas_invert_color(canvas);
                 } else {
-                    canvas_draw_str(canvas, 3, y + 8, label);
+                    canvas_draw_str(canvas, 2, y + 8, label);
                 }
             }
         }
