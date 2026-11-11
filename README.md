@@ -1,2 +1,3 @@
 # HamCram
-Ham Radio Study App for Flipper Zero.
+
+Ham Radio Study on Flipper Zero.
