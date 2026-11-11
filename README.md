@@ -52,6 +52,6 @@ Ham Cram is an independent, open source project. It is **not affiliated with, sp
 
 ## Source, issues and license
 
-Ham Cram is made by NicPWNs. Source code, build instructions and the pool conversion tools are at [github.com/NicPWNs/HamCram](https://github.com/NicPWNs/HamCram). Bug reports are welcome there. For developers: see [docs/development.md](https://github.com/NicPWNs/HamCram/blob/main/docs/development.md) and [docs/updating-pools.md](https://github.com/NicPWNs/HamCram/blob/main/docs/updating-pools.md).
+Source code, build instructions and the pool conversion tools are at [github.com/NicPWNs/HamCram](https://github.com/NicPWNs/HamCram). Bug reports are welcome there. For developers: see [docs/development.md](https://github.com/NicPWNs/HamCram/blob/main/docs/development.md) and [docs/updating-pools.md](https://github.com/NicPWNs/HamCram/blob/main/docs/updating-pools.md).
 
 The app is released under the MIT license. The question pools are in the public domain.
