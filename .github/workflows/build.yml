@@ -59,6 +59,8 @@ jobs:
           ruff format --check tools tests
       - name: Pool files match their JSON sources
         run: python tools/hampool.py verify
+      - name: Catalog description matches the README
+        run: python tools/catalog_description.py --check
       - name: Icon is 10x10 and 1-bit
         run: |
           python - <<'EOF'

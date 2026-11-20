@@ -11,7 +11,8 @@ sourcecode:
     origin: https://github.com/NicPWNs/HamCram.git
     ## Commit of the 1.0 release on main
     commit_sha: e3bac65584c8d46a7591c2b3024b11cb9ee61e2c
-description: "@README.md"
+## README.md without its GitHub-only blocks; see tools/catalog_description.py
+description: "@./catalog/description.md"
 changelog: "@./docs/changelog.md"
 ## Unmodified qFlipper screenshots; the first one is the catalog preview
 screenshots:

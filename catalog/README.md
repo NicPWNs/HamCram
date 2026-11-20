@@ -11,8 +11,14 @@ catalog's `Contributing.md` and `Manifest.md` on 2026-11-10.
 1. Screenshots live in `screenshots/` as `ss0.png`, `ss1.png`, ... and are
    listed in `manifest.yml`; the first is the catalog preview. Take new ones
    with qFlipper and leave them exactly as it saves them (512x256).
-2. Commit everything and push to `main`. Wait for CI to pass.
-3. Put that commit's full SHA into `commit_sha` in `manifest.yml`. If you
+2. The catalog allows only basic Markdown in a description (no images, HTML
+   or code spans), so it does not use `README.md` directly. After editing
+   the README, run `python tools/catalog_description.py` to rewrite
+   `catalog/description.md`, which is the README without the blocks between
+   `<!-- github-only:start -->` and `<!-- github-only:end -->`. CI fails if
+   the two are out of step.
+3. Commit everything and push to `main`. Wait for CI to pass.
+4. Put that commit's full SHA into `commit_sha` in `manifest.yml`. If you
    use fewer or more screenshots, edit the list to match.
 
 ## Validate the manifest locally (recommended)
