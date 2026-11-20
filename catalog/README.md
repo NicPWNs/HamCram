@@ -1,8 +1,10 @@
 # Submitting to the Flipper Apps Catalog
 
-`manifest.yml` in this folder is the draft for the catalog pull request.
-Requirements were checked against the catalog's `Contributing.md` and
-`Manifest.md` on 2026-11-10.
+Ham Cram 1.0 is in the catalog at
+[lab.flipper.net/apps/hamcram](https://lab.flipper.net/apps/hamcram).
+`manifest.yml` in this folder is a copy of the one published there; the steps
+below are for sending an update. Requirements were checked against the
+catalog's `Contributing.md` and `Manifest.md` on 2026-11-10.
 
 ## Before submitting
 
@@ -31,8 +33,10 @@ icon, screenshots, README and changelog. Fix anything it reports.
 
 ## Open the pull request
 
-1. Create a branch named `NicPWNs/hamcram_1.0`.
-2. Add `applications/Tools/hamcram/manifest.yml`.
+1. Create a branch named `NicPWNs/hamcram_<version>`, for example
+   `NicPWNs/hamcram_1.1`.
+2. Replace `applications/Tools/hamcram/manifest.yml` with the one from this
+   folder.
 3. Open the pull request and fill in its template.
 
 ## Updates

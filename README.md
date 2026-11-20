@@ -8,6 +8,10 @@ Ham Cram carries the complete official question pools for all three license clas
 - **General** (Element 3), 2023-2027 pool
 - **Amateur Extra** (Element 4), 2024-2028 pool
 
+## Install
+
+Ham Cram is in the official Flipper Apps Catalog. Find it under **Tools** in the Flipper mobile app, or install it from [lab.flipper.net/apps/hamcram](https://lab.flipper.net/apps/hamcram). To install by hand, copy `hamcram.fap` from the [latest release](https://github.com/NicPWNs/HamCram/releases/latest) to `apps/Tools` on the SD card.
+
 ## What it does
 
 - **Practice exams** built like the real thing: one question drawn at random from every question group (35 questions for Technician and General, 50 for Extra), graded against the real 74% pass mark (26 of 35, or 37 of 50). Nothing is revealed until you grade the exam, and you can step back to change an answer first. Afterwards, **Missed** walks you through the questions you got wrong with the right answers marked.

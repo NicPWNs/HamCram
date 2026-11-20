@@ -37,7 +37,7 @@ pools/sources.json     where each pool came from, its dates and checksum
 tools/hampool.py       NCVEC .docx -> JSON -> .hcp, plus verification
 tools/make_icon.py     writes the 10x10 icon
 tests/                 host-side tests (not part of the app build)
-catalog/manifest.yml   draft manifest for the Flipper Apps Catalog
+catalog/manifest.yml   manifest for the Flipper Apps Catalog
 ```
 
 ## Tests
